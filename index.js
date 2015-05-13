@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					providerId: providerId
 				}, function(response) {
 					if (response.error != null) { console.error("UNABLE TO AUTHENTICATE PROVIDER WITH ID: " + providerId); return; }
-					
+					inputElem.prop('checked', 'true'); 
 				});
 			}
 
