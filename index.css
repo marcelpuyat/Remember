@@ -1,0 +1,27 @@
+body {
+	width: 180px;
+}
+
+.provider-block {
+
+}
+
+.provider-title {
+	position: relative;
+	top: 15px;
+	left: 5px;
+	font-size: 15px;
+}
+
+.provider-icon {
+	height: 75px;
+	position: relative;
+}
+
+.ToggleSwitch {
+	position: relative !important;
+	bottom: 28px;
+	left: 5px;
+	width: 75px !important;
+	height: 18px !important;
+}

@@ -1,0 +1,5 @@
+Test malformed stuff during login
+Give providers an id and pass that to index.js as well for messaging across
+Convert Evernote to real and not sandbox (pending Evernote approval)
+Fix connect button not triggering if we don't need to authenticate off screen (Pocket does this)
+Test adding notes while waiting and seeing if it is refreshed to saved notes list
