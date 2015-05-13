@@ -25,23 +25,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			return true; // Must return true in onMessage to indicate we are waiting for an async function
 
 		case "authenticateProvider":
-			console.log("Authenticating provider: " + request.provider);
-			var providerToAuthenticate = request.provider;
-			if (_providers[providerToAuthenticate] == null) { 
+			console.log("Authenticating provider id: " + request.providerId);
+			var providerId = request.providerId;
+			if (_config.idToProviderMap[providerId] == null) { 
 				console.error("Error authenticating provider: " + 
 				providerToAuthenticate + ". Does not exist.");
 				sendResponse({error: "Error authenticating provider: " + 
 				providerToAuthenticate + ". Does not exist."});
 			} else {
-				_providers[providerToAuthenticate].getCreds(
+				var providerToAuthenticate = _providers[_config.idToProviderMap[providerId]];
+				providerToAuthenticate.getCreds(
 					function(creds) {
-						_providers[providerToAuthenticate].saveNotesAndCreds(creds, function() {
+						providerToAuthenticate.saveNotesAndCreds(creds, function() {
 							sendResponse({success: 'true'});
 						}); // TODO: catch error when can't save.
 					},
 					function() {
 						sendResponse({error: "Error authenticating provider: " +
-							providerToAuthenticate + ". Error getting creds."});
+							providerToAuthenticate.name + ". Error getting creds."});
 					}
 				);
 			}

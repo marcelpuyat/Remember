@@ -1,7 +1,7 @@
 var _providers = {
 
 	evernote: new Provider({
-		id: _config.idToProviderMap.evernote,
+		id: _config.providerToIdMap.evernote,
 		name: 'evernote',
 		readableName: 'Evernote',
 		icon: 'images/evernote_icon.png',
@@ -100,7 +100,7 @@ var _providers = {
 
 
 	pocket: new Provider({
-		id: _config.idToProviderMap.pocket,
+		id: _config.providerToIdMap.pocket,
 		name: 'pocket',
 		readableName: 'Pocket',
 		icon: 'images/pocket_icon.png',

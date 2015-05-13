@@ -11,16 +11,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		var authenticated;
 		var icon;
 		for (provider in response.providers) {
-			authenticated = response.providers[provider]['authenticated'];
-			icon = response.providers[provider]['icon'];
+			authenticated = response.providers[provider].authenticated;
+			icon = response.providers[provider].icon;
 			$('#providers_container')
 				.append(
 					"<div class='provider-block' id='"+provider+"_block'>"+
 						"<h3 class='provider-title'>"+provider+"</h3>"+
 						"<img class='provider-icon' src='"+icon+"'>"+
-						"<input type='checkbox' name='"+provider+"-connectSwitch'/>"+
+						"<input type='checkbox' name='"+response.providers[provider].id+"-connectSwitch'/>"+
 					"</div>");
-			var connectSwitch = $("[name='"+provider+"-connectSwitch']");
+			var connectSwitch = $("[name='"+response.providers[provider].id+"-connectSwitch']");
 			connectSwitch.attr('checked', authenticated);
 			connectSwitch.attr('wasConnected', authenticated); // Needed bec toggleSwitch changes 'checked' attr
 			connectSwitch.toggleSwitch();
@@ -28,20 +28,25 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('.ToggleSwitch').off('click'); // Turn off default toggleswitch behavior
 		$('.ToggleSwitch').on('click', function() {
 			var inputElem = $(this).find('input').first();
-			var provider = inputElem.attr('name').split('-')[0].toLowerCase();
+			if (inputElem.attr('name').split('-').length != 2) {
+				console.error("Input name has been tampered with. Not going to send request.");
+				return;
+			}
+			var providerId = inputElem.attr('name').split('-')[0].toLowerCase();
 			if (inputElem.attr('wasConnected') == true) {
 				console.log("Deleting provider!");
 				chrome.runtime.sendMessage({
 					type: "deleteProvider",
-					provider: provider
+					providerId: providerId
 				});
 			} else {
 				console.log("Authenticating provider");
 				chrome.runtime.sendMessage({
 					type: "authenticateProvider",
-					provider: provider
+					providerId: providerId
 				}, function(response) {
-					if (response.error != null) { console.log("UNABLE TO AUTHENTICATE: " + provider); return; }
+					if (response.error != null) { console.error("UNABLE TO AUTHENTICATE PROVIDER WITH ID: " + providerId); return; }
+					
 				});
 			}
 
