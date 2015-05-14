@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					console.log(lastPopupTime);
 					console.log(new Date(lastPopupTime));
 					console.log("It's been " + diffInHours(new Date(lastPopupTime), new Date()) + " hours since last popup.");
-					if (diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
+					// if (diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
 						_chromeStorageWrapper.updateLastPopupTime();
 						popupRandomNote();
-					}
+					// }
 				}
 			});
 			/* Will handle case where no notes exist */
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	};
 
 	chrome.alarms.create("popupAlarm", {
-		periodInMinutes: 20
+		periodInMinutes: 1
 	});
 	chrome.alarms.create("updateSavedNotes", {
 		periodInMinutes: 20
