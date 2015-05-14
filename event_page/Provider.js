@@ -19,15 +19,15 @@ function Provider(fields) {
 	}
 
 	function checkRequiredFields(fields) {
-		if (fields.id == null) { console.log("No id in a provider constructor"); return; }
+		if (fields.id == null) { console.error("No id in a provider constructor"); return; }
 		if (_unique_ids_.hasOwnProperty(fields.id)) {
 			console.error("Repeating provider id: " + fields.id); return;
 		} else {
 			_unique_ids_[fields.id] = true;
 		}
-		if (fields.getCreds == null) { console.log("No creds fn in a provider constructor"); return;}
-		if (fields.saveNotes == null) { console.log("No save notes fn in a provider constructor"); return; }
-		if (fields.name == null) { console.log("No name in a provider constructor"); return;}
-		if (fields.icon == null) { console.log("No icon in a provider constructor"); return;}
+		if (fields.getCreds == null) { console.error("No creds fn in a provider constructor"); return;}
+		if (fields.saveNotes == null) { console.error("No save notes fn in a provider constructor"); return; }
+		if (fields.name == null) { console.error("No name in a provider constructor"); return;}
+		if (fields.icon == null) { console.error("No icon in a provider constructor"); return;}
 	}
 }
