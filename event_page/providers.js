@@ -157,6 +157,7 @@ var _providers = {
 		consumerKey: '41045-c15029fc5174a3c9f01a4278',
 
 		getCreds: function(successCb, errorCb) {
+			// First, get req token
 			ajaxPost(_providers.pocket.url.request, {
 				consumer_key: _providers.pocket.consumerKey,
 				redirect_uri: _config.redirectUri
@@ -165,12 +166,14 @@ var _providers = {
 				if (res == null) { errorCb(); return; }
 				var requestToken = JSON.parse(res).code;
 
+				// Then redirect user to verify req token
 				chrome.identity.launchWebAuthFlow({
 					url: _providers.pocket.url.redirect_authorize+'?'+
 					'redirect_uri='+_config.redirectUri+'&'+
 					'request_token='+requestToken,
 					interactive: true
 				}, function() {
+
 					// At this point, request token is authorized and we can get access token
 					ajaxPost(_providers.pocket.url.authorize, {
 						consumer_key: _providers.pocket.consumerKey,
@@ -178,14 +181,18 @@ var _providers = {
 					}, 'application/x-www-form-urlencoded; charset=UTF8', true,
 					function(res) {
 						if (res == null) { errorCb(); return; }
+
+						// Access token now valid. Can save
 						var json = JSON.parse(res);
 						successCb({access_token: json.access_token, username: json.username});
-					});
+					}, errorCb);
 				});
-			});
+			}, errorCb);
 		},
 		
 		saveNotes: function(creds, successCb, errorCb) {
+
+			// First, get notes using ajax
 			ajaxPost(_providers.pocket.url.get, {
 				access_token: creds['access_token'],
 				consumer_key: _providers.pocket.consumerKey,
@@ -194,14 +201,16 @@ var _providers = {
 				if (res == null) { errorCb("Error getting pocket data."); return; }
 				var json = JSON.parse(res);
 				if (json.error !== null) {console.error(res.error); return; }
+
 				var pocketNoteObj;
 				var notesToSave = [];
 				for (var idx in json.list) {
 					pocketNoteObj = json.list[idx];
 					notesToSave.push(new Note(_providers.pocket.name, pocketNoteObj.resolved_id, pocketNoteObj.resolved_title, pocketNoteObj.resolved_url));
 				}
+				
 				_chromeStorageWrapper.updateNotesForProvider(_providers.pocket.name, notesToSave, successCb, errorCb);
-			});
+			}, errorCb);
 		}
 	})
 			
