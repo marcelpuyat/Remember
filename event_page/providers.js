@@ -8,6 +8,7 @@ var _providers = {
 		url: {
 			redirect_authorize: 'https://www.evernote.com/OAuth.action'
 		},
+
 		getCreds: function(successCb, errorCb) {
 			var hostName = "https://www.evernote.com";
 			var options,oauth;
@@ -18,6 +19,7 @@ var _providers = {
 				signatureMethod : "HMAC-SHA1",
 			};
 			oauth = OAuth(options);
+			// Step one: Get auth token and secret
 			oauth.request({
 				'method': 'GET', 
 				'url': hostName + '/oauth', 
@@ -28,15 +30,21 @@ var _providers = {
 					console.log(res.text);
 					var oauthToken = resArray[0].split('=')[1];
 					var oauthTokenSecret = resArray[1].split('=')[1];
+
+					// Step two: redirect user to Evernote to log in to verify our token
 					chrome.identity.launchWebAuthFlow({
 						url: _providers.evernote.url.redirect_authorize+'?'+
 						'oauth_token='+oauthToken,
 						interactive: true
 					}, function(getVerifierUrl) {
+
+						// Get verifier from url on callback from Evernote
 						var oauthVerifier = $.urlParam("oauth_verifier", getVerifierUrl);
 						if (oauthVerifier == null) { errorCb("Could not get verifier from Evernote"); return; }
 						oauth.setVerifier(oauthVerifier);
 						oauth.setAccessToken([oauthToken,oauthTokenSecret]);
+
+						// Last step: Get access token
 						oauth.request({
 							'method': 'GET', 
 							'url': hostName + '/oauth',
@@ -46,17 +54,11 @@ var _providers = {
            						var accessToken = $.paramFromText('oauth_token', finalRes.text);
            						successCb({'note_store_url': noteStoreUrl, 'access_token': accessToken});
            					}, 
-           					'failure': function(err) {
-           						console.error(err);
-           						errorCb(err);
-           						return;
-           					}
+           					'failure': errorCb
            				});
 					});
 				}, 
-				'failure': function(error) {
-					console.error("Error: " + error);
-				}
+				'failure': errorCb
 			});
 		},
 		saveNotes: function(creds, successCb, errorCb) {
@@ -65,42 +67,60 @@ var _providers = {
 			var noteStoreProtocol = new Thrift.BinaryProtocol(noteStoreTransport);
 			var noteStore = new NoteStoreClient(noteStoreProtocol);
 
+			// First, find remember tag
 			noteStore.listTags(creds['access_token'], function (tags) {
-			        if (tags == null) { console.error("No tags"); return; } // Maybe do errorCb
+			        if (tags == null) { errorCb("No tags"); return; }
 			        console.log("Got tags");
+
+			        // Search through all tags
 			        for (var idx in tags) {
 			        	var tag = tags[idx];
+
 			        	if (tag.name.toLowerCase() == "remember") {
-			        		console.log("Found remember tag!");
+			        		console.log("Found remember tag in evernote!");
+
 			        		var rememberTagGuid = tag.guid;
 			        		var filter = new NoteFilter();
 			        		filter.tagGuids = [rememberTagGuid];
 			        		var spec = new NotesMetadataResultSpec();
 			        		spec.includeTitle = true;
 			        		spec.includeNotebookGuid = true;
+
+			        		// Get notes with the remember tag (using the NoteFilter obj)
 			        		noteStore.findNotesMetadata(creds['access_token'], filter, 0, 1000, spec, function(retObj) {
 			        			console.log("Found all remember notes");
 			        			console.dir(retObj);
 			        			if (retObj == null || retObj.notes == null) { return; } // Maybe do errorCb
+
 			        			var notes = retObj.notes;
-			        			var notesToSave = [];
+			        			var notesToSave = []; // will hold all notes we get
 			        			var noteUrlPrefix = "https://www.evernote.com/Home.action#st=p&n=";
-			        			var notebookTitles = {}; // Cache those we already have
 			        			var numNotesSaved = 0;
+
+			        			// We have to make queries for each note to get the notebook title
+			        			var notebookTitles = {}; // Cache those we already have
+
 			        			for (var idx in notes) {
 			        				var note = notes[idx];
+
 			        				if (notebookTitles[note.notebookGuid] == null) {
-			        					(function(note) {
+			        					// Case where notebook title was note cached. We must query Evernote API.
+			        					(function(note) { // Closure needed bec we are in for loop with changing 'note' variable
 				        					noteStore.getNotebook(creds['access_token'], note.notebookGuid, function(notebookData) {
 				        						notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookData.name + ": " + note.title, noteUrlPrefix+note.guid));
+
+				        						// We must only update our saved notes after all notes have been saved. Each is async, so all have to check if we are done
 					        					numNotesSaved++;
 					        					if (numNotesSaved == notes.length) {
 					        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
 					        					}
 				        					});
 			        					})(note);
+
 			        				} else {
-			        					notesToSave.push(new Note(notebookTitles[note.notebookGuid] + ": " + _providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
+			        					notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
+
+			        					// We must only update our saved notes after all notes have been saved. Each is async, so all have to check if we are done
 			        					numNotesSaved++;
 			        					if (numNotesSaved == notes.length) {
 			        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
@@ -113,7 +133,7 @@ var _providers = {
 			        }
 			    },
 			    function onerror(error) {
-			        console.error(error);
+			        errorCb(error);
 			    }
 			);
 		}
@@ -171,7 +191,7 @@ var _providers = {
 				consumer_key: _providers.pocket.consumerKey,
 				tag: _config.defaultTag
 			}, 'application/json; charset=UTF8', true, function(res) {
-				if (res == null) { console.error("Error getting pocket data."); return; }
+				if (res == null) { errorCb("Error getting pocket data."); return; }
 				var json = JSON.parse(res);
 				if (json.error !== null) {console.error(res.error); return; }
 				var pocketNoteObj;
