@@ -89,18 +89,18 @@ var _providers = {
 			        			var numNotesSaved = 0;
 			        			for (var idx in notes) {
 			        				var note = notes[idx];
-			        				var notebookName = notebookTitles[note.notebookGuid];
-			        				if (notebookName == null) {
-			        					noteStore.getNotebook(creds['access_token'], note.notebookGuid, function(notebookData) {
-			        						notebookName = notebookData.name;
-			        						notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
-				        					numNotesSaved++;
-				        					if (numNotesSaved == notes.length) {
-				        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
-				        					}
-			        					});
+			        				if (notebookTitles[note.notebookGuid] == null) {
+			        					(function(note) {
+				        					noteStore.getNotebook(creds['access_token'], note.notebookGuid, function(notebookData) {
+				        						notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookData.name + ": " + note.title, noteUrlPrefix+note.guid));
+					        					numNotesSaved++;
+					        					if (numNotesSaved == notes.length) {
+					        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
+					        					}
+				        					});
+			        					})(note);
 			        				} else {
-			        					notesToSave.push(new Note(notebookName + ": " + _providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
+			        					notesToSave.push(new Note(notebookTitles[note.notebookGuid] + ": " + _providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
 			        					numNotesSaved++;
 			        					if (numNotesSaved == notes.length) {
 			        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
@@ -185,4 +185,4 @@ var _providers = {
 		}
 	})
 			
-}
+};
