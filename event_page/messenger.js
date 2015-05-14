@@ -32,10 +32,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			providerToAuthenticate.getCreds(
 				function(creds) {
 					providerToAuthenticate.saveNotesAndCreds(creds, function() {
+						_popupHandler.popupNotifyAuth(true, true, _config.idToProviderMap[providerId]);
 						sendResponse({success: 'true'});
 					}); // TODO: catch error when can't save.
 				},
 				function() {
+					_popupHandler.popupNotifyAuth(true, false, _config.idToProviderMap[providerId]);
 					sendResponse({error: "Error authenticating provider: " +
 						providerToAuthenticate.name + ". Error getting creds."});
 				}
@@ -49,9 +51,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			providerToDelete.deleteNotesAndCreds(
 				function() {
 					console.log("Deleted creds for provider: " + providerId);
+					_popupHandler.popupNotifyAuth(false, true, _config.idToProviderMap[providerId]);
 					sendResponse({success: 'true'});
 				},
 				function(err) {
+					_popupHandler.popupNotifyAuth(false, false, _config.idToProviderMap[providerId]);
 					console.error("Unable to delete provider: " + providerToDelete.name + ". Error: " + err);
 				}
 			);

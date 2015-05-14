@@ -13,14 +13,15 @@ function Provider(fields) {
 	};
 
 	this.deleteNotesAndCreds = function(successCb, errorCb) {
-		_chromeStorageWrapper.deleteCredsForProvider(_this.name, successCb, errorCb);
-		_chromeStorageWrapper.deleteNotesForProvider(_this.name, successCb, errorCb);
+		_chromeStorageWrapper.deleteCredsForProvider(_this.name, function() {
+			_chromeStorageWrapper.deleteNotesForProvider(_this.name, successCb, errorCb);
+		}, errorCb);
 	}
 
 	function checkRequiredFields(fields) {
 		if (fields.id == null) { console.log("No id in a provider constructor"); return; }
 		if (_unique_ids_.hasOwnProperty(fields.id)) {
-			console.log("Repeating provider id: " + fields.id); return;
+			console.error("Repeating provider id: " + fields.id); return;
 		} else {
 			_unique_ids_[fields.id] = true;
 		}

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+	var _providerIdToProviderMap = {};
 	chrome.runtime.sendMessage({
 		type: "getProviders"
 	}, function(response) {
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var authenticated;
 		var icon;
 		for (provider in response.providers) {
+			_providerIdToProviderMap[response.providers[provider].id] = {'name': provider, 'icon': response.providers[provider].icon};
 			authenticated = response.providers[provider].authenticated;
 			icon = response.providers[provider].icon;
 			$('#providers_container')
@@ -39,7 +41,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					type: "deleteProvider",
 					providerId: providerId
 				}, function(response) {
-					if (response.error != null) { console.error("UNABLE TO DELETE AUTH FOR PROVIDER WITH ID: " + providerId); return; }
+					if (response.error != null) { 
+						console.error("UNABLE TO DELETE AUTH FOR PROVIDER WITH ID: " + providerId); 
+						return; 
+					}
 					inputElem.attr('wasConnected', false);
 					console.log("Trying to switch off switch for: " + providerId);
 					inputElem.prop('checked', false);
@@ -50,7 +55,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					type: "authenticateProvider",
 					providerId: providerId
 				}, function(response) {
-					if (response.error != null) { console.error("UNABLE TO AUTHENTICATE PROVIDER WITH ID: " + providerId); return; }
+					if (response.error != null) { 
+						console.error("UNABLE TO AUTHENTICATE PROVIDER WITH ID: " + providerId); 
+						return; 
+					}
 					inputElem.attr('wasConnected', true);
 					console.log("Trying to switch on switch for: " + providerId);
 					inputElem.prop('checked', true); 

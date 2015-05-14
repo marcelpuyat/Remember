@@ -48,8 +48,9 @@ function ChromeStorageWrapper() {
 					errorCb("Provider " + provider + " does not exist");
 			} else {
 				returnObj[providersStoreKey][provider] = null;
-				storeKeyVal(providersStoreKey, returnObj[providersStoreKey], successCb, errorCb);
-				storeKeyVal(provider, null, successCb, errorCb);
+				storeKeyVal(providersStoreKey, returnObj[providersStoreKey], function() {
+					storeKeyVal(provider, null, successCb, errorCb);
+				}, errorCb);
 			}
 		});
 	}

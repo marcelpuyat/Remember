@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					console.log(lastPopupTime);
 					console.log(new Date(lastPopupTime));
 					console.log("It's been " + diffInHours(new Date(lastPopupTime), new Date()) + " hours since last popup.");
-					// if (diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
+					if (diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
 						_chromeStorageWrapper.updateLastPopupTime();
 						popupRandomNote();
-					// }
+					}
 				}
 			});
 			/* Will handle case where no notes exist */
@@ -33,9 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
 					if (savedNotes.length > 0) {
 						console.log("Pop up!");
 						var randomIdx = Math.floor(Math.random()*savedNotes.length);
-						console.log("Choosing note: " + JSON.stringify(savedNotes[randomIdx]));
+						var chosenNote = savedNotes[randomIdx];
+						console.log("Choosing note: " + JSON.stringify(chosenNote));
 						console.dir(savedNotes);
-						popupNotif(savedNotes[randomIdx]);
+						_popupHandler.popupRememberNote(chosenNote, _providers[chosenNote.provider].icon);
 					}
 				});
 			}
@@ -46,10 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	};
 
 	chrome.alarms.create("popupAlarm", {
-		periodInMinutes: 1
+		periodInMinutes: 20
 	});
 	chrome.alarms.create("updateSavedNotes", {
-		periodInMinutes: 1
+		periodInMinutes: 20
 	});
 	chrome.alarms.onAlarm.addListener(function(alarm) {
 		if (alarmHandlers[alarm.name] === undefined) { console.error("Undefined alarm: " + alarm.name); return; }
@@ -63,27 +64,4 @@ document.addEventListener('DOMContentLoaded', function() {
 	chrome.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
 		chrome.notifications.clear(notificationId);
 	});
-	
-	function popupNotif(note) {
-
-		chrome.notifications.create(null, {
-			type: 'basic',
-			title: 'Remember?',
-			message: note.title,
-			iconUrl: _providers[note.provider].icon,
-			buttons: [
-				{
-					'title': 'Go to page'
-				}
-			]
-		}, function(notifId) {
-			chrome.notifications.onButtonClicked.addListener(function(clickedId) {
-				if (clickedId == notifId)
-					openInNewTab(note.url);
-			});
-		});
-
-	
-
-	}
 });

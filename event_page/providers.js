@@ -70,7 +70,6 @@ var _providers = {
 			        console.log("Got tags");
 			        for (var idx in tags) {
 			        	var tag = tags[idx];
-			        	console.log("Going over tag: " + tag.name);
 			        	if (tag.name.toLowerCase() == "remember") {
 			        		console.log("Found remember tag!");
 			        		var rememberTagGuid = tag.guid;
@@ -93,7 +92,6 @@ var _providers = {
 			        				var notebookName = notebookTitles[note.notebookGuid];
 			        				if (notebookName == null) {
 			        					noteStore.getNotebook(creds['access_token'], note.notebookGuid, function(notebookData) {
-			        						console.log(notebookData);
 			        						notebookName = notebookData.name;
 			        						notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
 				        					numNotesSaved++;
