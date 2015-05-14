@@ -33,11 +33,16 @@ document.addEventListener('DOMContentLoaded', function() {
 				return;
 			}
 			var providerId = inputElem.attr('name').split('-')[0].toLowerCase();
-			if (inputElem.attr('wasConnected') == true) {
+			if (inputElem.attr('wasConnected') == 'true') {
 				console.log("Deleting provider!");
 				chrome.runtime.sendMessage({
 					type: "deleteProvider",
 					providerId: providerId
+				}, function(response) {
+					if (response.error != null) { console.error("UNABLE TO DELETE AUTH FOR PROVIDER WITH ID: " + providerId); return; }
+					inputElem.attr('wasConnected', false);
+					console.log("Trying to switch off switch for: " + providerId);
+					inputElem.prop('checked', false);
 				});
 			} else {
 				console.log("Authenticating provider");
@@ -46,7 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
 					providerId: providerId
 				}, function(response) {
 					if (response.error != null) { console.error("UNABLE TO AUTHENTICATE PROVIDER WITH ID: " + providerId); return; }
-					inputElem.prop('checked', 'true'); 
+					inputElem.attr('wasConnected', true);
+					console.log("Trying to switch on switch for: " + providerId);
+					inputElem.prop('checked', true); 
 				});
 			}
 

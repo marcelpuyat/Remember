@@ -41,6 +41,19 @@ function ChromeStorageWrapper() {
 		});
 	};
 
+	this.deleteNotesForProvider = function(provider, successCb, errorCb) {
+		chrome.storage.local.get(providersStoreKey, function(returnObj) {
+			if (returnObj[providersStoreKey] == null || returnObj[providersStoreKey][provider] == null) {
+				if (errorCb)
+					errorCb("Provider " + provider + " does not exist");
+			} else {
+				returnObj[providersStoreKey][provider] = null;
+				storeKeyVal(providersStoreKey, returnObj[providersStoreKey], successCb, errorCb);
+				storeKeyVal(provider, null, successCb, errorCb);
+			}
+		});
+	}
+
 	/* Returns all notes from all providers */
 	this.getNotes = function(callback) {
 		var allNotes = [];
@@ -129,16 +142,35 @@ function ChromeStorageWrapper() {
 		});
 	};
 
+	this.deleteCredsForProvider = function(provider, successCb, errorCb) {
+		chrome.storage.local.get(credsStoreKey, function(returnObj) {
+			console.log("Trying to delete creds for provider: " + provider);
+			if (returnObj[credsStoreKey] == null || returnObj[credsStoreKey][provider] == null) {
+				if (errorCb)
+					errorCb("Unable to delete creds for provider: " + provider);
+			} else {
+				returnObj[credsStoreKey][provider] = null;
+				storeKeyVal(credsStoreKey, returnObj[credsStoreKey], successCb, errorCb);
+			}
+		});
+	}
+
 	/* End access creds stuff */
 
 	// Private functions
 
 	/* Wrapper around chrome.storage.local.set to make syntax easier to use */
-	function storeKeyVal(key, val) {
+	function storeKeyVal(key, val, successCb, errorCb) {
 		console.log("Storing key: " + JSON.stringify(key) + " with val: " + JSON.stringify(val));
 		var obj = {};
 		obj[key] = val;
-		chrome.storage.local.set(obj);
+		chrome.storage.local.set(obj, function() {
+			if (chrome.runtime.lastError && errorCb) {
+				errorCb(chrome.runtime.lastError);
+			} else if (successCb) {
+				successCb();
+			}
+		});
 	}
 }
 

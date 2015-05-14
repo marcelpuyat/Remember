@@ -25,32 +25,44 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			return true; // Must return true in onMessage to indicate we are waiting for an async function
 
 		case "authenticateProvider":
-			console.log("Authenticating provider id: " + request.providerId);
 			var providerId = request.providerId;
-			if (_config.idToProviderMap[providerId] == null) { 
-				console.error("Error authenticating provider: " + 
-				providerToAuthenticate + ". Does not exist.");
-				sendResponse({error: "Error authenticating provider: " + 
-				providerToAuthenticate + ". Does not exist."});
-			} else {
-				var providerToAuthenticate = _providers[_config.idToProviderMap[providerId]];
-				providerToAuthenticate.getCreds(
-					function(creds) {
-						providerToAuthenticate.saveNotesAndCreds(creds, function() {
-							sendResponse({success: 'true'});
-						}); // TODO: catch error when can't save.
-					},
-					function() {
-						sendResponse({error: "Error authenticating provider: " +
-							providerToAuthenticate.name + ". Error getting creds."});
-					}
-				);
-			}
+			console.log("Authenticating provider id: " + request.providerId);
+			if (_config.idToProviderMap[providerId] == null) { sendErrorBadProviderId(sendResponse, providerId); return; }
+			var providerToAuthenticate = _providers[_config.idToProviderMap[providerId]];
+			providerToAuthenticate.getCreds(
+				function(creds) {
+					providerToAuthenticate.saveNotesAndCreds(creds, function() {
+						sendResponse({success: 'true'});
+					}); // TODO: catch error when can't save.
+				},
+				function() {
+					sendResponse({error: "Error authenticating provider: " +
+						providerToAuthenticate.name + ". Error getting creds."});
+				}
+			);
 			return true;
 		case "deleteProvider":
-
+			var providerId = request.providerId;
+			console.log("Deleting auth for provider id: " + request.providerId);
+			if (_config.idToProviderMap[providerId] == null) { sendErrorBadProviderId(sendResponse, providerId); return; }
+			var providerToDelete = _providers[_config.idToProviderMap[providerId]];
+			providerToDelete.deleteNotesAndCreds(
+				function() {
+					console.log("Deleted creds for provider: " + providerId);
+					sendResponse({success: 'true'});
+				},
+				function(err) {
+					console.error("Unable to delete provider: " + providerToDelete.name + ". Error: " + err);
+				}
+			);
 			return true;
 		default:
 			sendResponse({error: "Illegal request type"});
+	}
+
+	function sendErrorBadProviderId(sendResponseFn, badId) {
+		var errorMsg = "Bad provider id: " + badId + ". Does not exist.";
+		console.error(errorMsg);
+		sendResponse({error: errorMsg});
 	}
 });

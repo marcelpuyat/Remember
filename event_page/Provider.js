@@ -12,6 +12,11 @@ function Provider(fields) {
 		}
 	};
 
+	this.deleteNotesAndCreds = function(successCb, errorCb) {
+		_chromeStorageWrapper.deleteCredsForProvider(_this.name, successCb, errorCb);
+		_chromeStorageWrapper.deleteNotesForProvider(_this.name, successCb, errorCb);
+	}
+
 	function checkRequiredFields(fields) {
 		if (fields.id == null) { console.log("No id in a provider constructor"); return; }
 		if (_unique_ids_.hasOwnProperty(fields.id)) {
