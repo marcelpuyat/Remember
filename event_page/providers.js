@@ -6,10 +6,10 @@ var _providers = {
 		readableName: 'Evernote',
 		icon: 'images/evernote_icon.png',
 		url: {
-			redirect_authorize: 'https://sandbox.evernote.com/OAuth.action'
+			redirect_authorize: 'https://www.evernote.com/OAuth.action'
 		},
 		getCreds: function(successCb, errorCb) {
-			var hostName = "https://sandbox.evernote.com";
+			var hostName = "https://www.evernote.com";
 			var options,oauth;
 			options = {
 				consumerKey: "marcelp0-7910",
@@ -47,6 +47,7 @@ var _providers = {
            						successCb({'note_store_url': noteStoreUrl, 'access_token': accessToken});
            					}, 
            					'failure': function(err) {
+           						console.error(err);
            						errorCb(err);
            						return;
            					}
@@ -59,26 +60,31 @@ var _providers = {
 			});
 		},
 		saveNotes: function(creds) {
+			console.log("Saving notes for Evernote");
 			var noteStoreTransport = new Thrift.BinaryHttpTransport(creds['note_store_url']);
 			var noteStoreProtocol = new Thrift.BinaryProtocol(noteStoreTransport);
 			var noteStore = new NoteStoreClient(noteStoreProtocol);
 
 			noteStore.listTags(creds['access_token'], function (tags) {
-			        if (tags == null) { return; } // Maybe do errorCb
+			        if (tags == null) { console.error("No tags"); return; } // Maybe do errorCb
+			        console.log("Got tags");
 			        for (var idx in tags) {
 			        	var tag = tags[idx];
-			        	if (tag.name == "remember") {
+			        	console.log("Going over tag: " + tag.name);
+			        	if (tag.name.toLowerCase() == "remember") {
+			        		console.log("Found remember tag!");
 			        		var rememberTagGuid = tag.guid;
 			        		var filter = new NoteFilter();
 			        		filter.tagGuids = [rememberTagGuid];
 			        		var spec = new NotesMetadataResultSpec();
 			        		spec.includeTitle = true;
 			        		noteStore.findNotesMetadata(creds['access_token'], filter, 0, 1000, spec, function(retObj) {
+			        			console.log("Found all remember notes");
 			        			console.dir(retObj);
 			        			if (retObj == null || retObj.notes == null) { return; } // Maybe do errorCb
 			        			var notes = retObj.notes;
 			        			var notesToSave = [];
-			        			var noteUrlPrefix = "https://sandbox.evernote.com/Home.action#st=p&n=";
+			        			var noteUrlPrefix = "https://www.evernote.com/Home.action#st=p&n=";
 			        			for (var idx in notes) {
 			        				var note = notes[idx];
 			        				var noteUrl = 
