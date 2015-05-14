@@ -1,8 +1,10 @@
 Features
-	- Test deleting auth of provider
+	- Create on installation notification to tell user to click on icon
+	- Notify users on auth/error with Chrome notifications
+	- Include Evernote notebook name in title
 
 UI:
-	- Create a waiting for authentication animation when waiting after clicking button.
+	- Update switch UI + waiting on off/on switch
 
 Error handling:
 	- Test malformed stuff during login
@@ -11,3 +13,6 @@ Error handling:
 
 APIs:
 	- Convert Evernote to real and not sandbox (pending Evernote approval)
+
+Refactor:
+	- Everything...

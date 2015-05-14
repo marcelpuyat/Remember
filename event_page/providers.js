@@ -78,6 +78,7 @@ var _providers = {
 			        		filter.tagGuids = [rememberTagGuid];
 			        		var spec = new NotesMetadataResultSpec();
 			        		spec.includeTitle = true;
+			        		spec.includeNotebookGuid = true;
 			        		noteStore.findNotesMetadata(creds['access_token'], filter, 0, 1000, spec, function(retObj) {
 			        			console.log("Found all remember notes");
 			        			console.dir(retObj);
@@ -85,12 +86,29 @@ var _providers = {
 			        			var notes = retObj.notes;
 			        			var notesToSave = [];
 			        			var noteUrlPrefix = "https://www.evernote.com/Home.action#st=p&n=";
+			        			var notebookTitles = {}; // Cache those we already have
+			        			var numNotesSaved = 0;
 			        			for (var idx in notes) {
 			        				var note = notes[idx];
-			        				var noteUrl = 
-			        				notesToSave.push(new Note(_providers.evernote.name, note.guid, note.title, noteUrlPrefix+note.guid));
+			        				var notebookName = notebookTitles[note.notebookGuid];
+			        				if (notebookName == null) {
+			        					noteStore.getNotebook(creds['access_token'], note.notebookGuid, function(notebookData) {
+			        						console.log(notebookData);
+			        						notebookName = notebookData.name;
+			        						notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
+				        					numNotesSaved++;
+				        					if (numNotesSaved == notes.length) {
+				        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
+				        					}
+			        					});
+			        				} else {
+			        					notesToSave.push(new Note(notebookName + ": " + _providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
+			        					numNotesSaved++;
+			        					if (numNotesSaved == notes.length) {
+			        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
+			        					}
+			        				}
 			        			}
-			        			_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
 			        		});
 			        		return;
 			        	}
