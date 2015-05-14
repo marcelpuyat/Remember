@@ -10,7 +10,7 @@
       "apis/evernote-sdk.js",
       "vendor/jquery-1.11.3.min.js",
       "utils/helpers.js",
-      "event_page/popupHandler.js",
+      "event_page/notifHandler.js",
       "event_page/storageWrapper.js",
       "event_page/Provider.js",
       "event_page/Note.js",

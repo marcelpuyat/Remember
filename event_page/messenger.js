@@ -21,7 +21,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				console.log("Sending response to get providers");
 				console.dir(providersObj);
 				sendResponse({providers: providersObj});
-			}, console.error);
+			}, function() {
+				var errorMsg = "Could not get providers information";
+				console.error(errorMsg);
+				_notifHandler.notifError("Error", "Sorry :( An unexpected error occurred when "+
+					"retrieving your settings. Please contact us for further support.");
+				sendResponse({error: errorMsg});
+			});
 			return true; // Must return true in onMessage to indicate we are waiting for an async function
 
 		case "authenticateProvider":
@@ -31,13 +37,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			var providerToAuthenticate = _providers[_config.idToProviderMap[providerId]];
 			providerToAuthenticate.getCreds(
 				function(creds) {
-					providerToAuthenticate.saveNotesAndCreds(creds, function() {
-						_popupHandler.popupNotifyAuth(true, true, _config.idToProviderMap[providerId]);
-						sendResponse({success: 'true'});
-					}); // TODO: catch error when can't save.
+					providerToAuthenticate.saveNotesAndCreds(creds, 
+						function() {
+							_notifHandler.notifAuth(true, true, _config.idToProviderMap[providerId]);
+							sendResponse({success: 'true'});
+						},
+						function(error) {
+							if (error) { console.error(error); }
+							else { console.error("Unable to save notes and creds for provider: " + providerToAuthenticate.name); }
+							sendResponse({error: "Error saving provider notes/creds. Error: " + error});
+						}
+					);
 				},
 				function() {
-					_popupHandler.popupNotifyAuth(true, false, _config.idToProviderMap[providerId]);
+					_notifHandler.notifAuth(true, false, _config.idToProviderMap[providerId]);
 					sendResponse({error: "Error authenticating provider: " +
 						providerToAuthenticate.name + ". Error getting creds."});
 				}
@@ -51,11 +64,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			providerToDelete.deleteNotesAndCreds(
 				function() {
 					console.log("Deleted creds for provider: " + providerId);
-					_popupHandler.popupNotifyAuth(false, true, _config.idToProviderMap[providerId]);
+					_notifHandler.notifAuth(false, true, _config.idToProviderMap[providerId]);
 					sendResponse({success: 'true'});
 				},
 				function(err) {
-					_popupHandler.popupNotifyAuth(false, false, _config.idToProviderMap[providerId]);
+					_notifHandler.notifAuth(false, false, _config.idToProviderMap[providerId]);
 					console.error("Unable to delete provider: " + providerToDelete.name + ". Error: " + err);
 				}
 			);

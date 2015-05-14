@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						var chosenNote = savedNotes[randomIdx];
 						console.log("Choosing note: " + JSON.stringify(chosenNote));
 						console.dir(savedNotes);
-						_popupHandler.popupRememberNote(chosenNote, _providers[chosenNote.provider].icon);
+						_notifHandler.notifRememberNote(chosenNote, _providers[chosenNote.provider].icon);
 					}
 				}, console.error);
 			}
@@ -57,13 +57,5 @@ document.addEventListener('DOMContentLoaded', function() {
 	chrome.alarms.onAlarm.addListener(function(alarm) {
 		if (alarmHandlers[alarm.name] === undefined) { console.error("Undefined alarm: " + alarm.name); return; }
 		alarmHandlers[alarm.name](alarm); // Call appropriate alarm handler, passing in alarm
-	});
-
-	// Must clear notification on user button click or close
-	chrome.notifications.onClosed.addListener(function(notificationId, doneByUser) {
-		chrome.notifications.clear(notificationId);
-	});
-	chrome.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
-		chrome.notifications.clear(notificationId);
 	});
 });

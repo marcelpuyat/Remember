@@ -133,7 +133,7 @@ function ChromeStorageWrapper() {
 		for (var providerName in _providers) {
 			provider = _providers[providerName];
 			(function(provider) {
-				_this.getStoredCreds(provider.name, function(creds) {
+				_this.getCredsForProvider(provider.name, function(creds) {
 					if (creds == null) {
 						errorCb("Creds for provider: " + provider + " is null");
 						return;
@@ -158,7 +158,7 @@ function ChromeStorageWrapper() {
 		});
 	};
 
-	this.getStoredCreds = function(provider, successCb, errorCb) {
+	this.getCredsForProvider = function(provider, successCb, errorCb) {
 		console.log("Getting creds for provider: " + provider);
 		chrome.storage.local.get(credsStoreKey, function(returnObj) {
 			if (chrome.runtime.lastError) { if (errorCb) errorCb(chrome.runtime.lastError); return; }

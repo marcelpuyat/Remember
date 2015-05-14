@@ -5,14 +5,12 @@ UI:
 	- Update switch UI + waiting on off/on switch
 
 Error handling:
-	- Test malformed stuff during login
 	- Test adding notes while waiting and seeing if it is refreshed to saved notes list
-	- Success & error cb's for all auth stuff
 
 APIs:
 	- Add another provider... Dropbox maybe?
 
 Refactor:
-	- Everything...
 	- Use StorageArea.remove when deleting stuff in storageWrapper.js
 	- Make flatter schema in storageWrapper.js
+	- Clean up messenger.js and maybe alarmHandler.js
