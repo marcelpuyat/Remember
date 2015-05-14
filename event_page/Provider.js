@@ -4,12 +4,9 @@ function Provider(fields) {
 	checkRequiredFields(fields);
 	var _this = this;
 	$.extend(this, fields);
-	this.saveNotesAndCreds = function(creds, callback) {
+	this.saveNotesAndCreds = function(creds, successCb, errorCb) {
 		_this.saveNotes(creds);
-		_chromeStorageWrapper.saveCredsForProvider(_this.name, creds);
-		if (callback != null) {
-			callback();
-		}
+		_chromeStorageWrapper.saveCredsForProvider(_this.name, creds, successCb, errorCb);
 	};
 
 	this.deleteNotesAndCreds = function(successCb, errorCb) {

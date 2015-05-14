@@ -14,19 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (lastPopupTime == null) {
 					// Means we are doing this for first time.
 					console.log("Haven't popped up before.");
-					_chromeStorageWrapper.updateLastPopupTime();
-					popupRandomNote();
+					_chromeStorageWrapper.updateLastPopupTime(function() {
+						popupRandomNote();
+					}, console.error);
 				} else {
 					console.log("Need to check last popup time.");
 					console.log(lastPopupTime);
 					console.log(new Date(lastPopupTime));
 					console.log("It's been " + diffInHours(new Date(lastPopupTime), new Date()) + " hours since last popup.");
 					// if (diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
-						_chromeStorageWrapper.updateLastPopupTime();
-						popupRandomNote();
+						_chromeStorageWrapper.updateLastPopupTime(function() {
+							popupRandomNote();
+						}, console.error);
 					// }
 				}
-			});
+			}, console.error);
 			/* Will handle case where no notes exist */
 			function popupRandomNote() {
 				_chromeStorageWrapper.getNotes(function(savedNotes) {
@@ -38,11 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
 						console.dir(savedNotes);
 						_popupHandler.popupRememberNote(chosenNote, _providers[chosenNote.provider].icon);
 					}
-				});
+				}, console.error);
 			}
 		},
 		updateSavedNotes: function(alarm) {
-			_chromeStorageWrapper.refreshAllProviderNotes();
+			_chromeStorageWrapper.refreshAllProviderNotes(null, console.error);
 		}
 	};
 

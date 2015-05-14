@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				console.log("Sending response to get providers");
 				console.dir(providersObj);
 				sendResponse({providers: providersObj});
-			});
+			}, console.error);
 			return true; // Must return true in onMessage to indicate we are waiting for an async function
 
 		case "authenticateProvider":

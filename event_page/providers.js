@@ -59,7 +59,7 @@ var _providers = {
 				}
 			});
 		},
-		saveNotes: function(creds) {
+		saveNotes: function(creds, successCb, errorCb) {
 			console.log("Saving notes for Evernote");
 			var noteStoreTransport = new Thrift.BinaryHttpTransport(creds['note_store_url']);
 			var noteStoreProtocol = new Thrift.BinaryProtocol(noteStoreTransport);
@@ -95,7 +95,7 @@ var _providers = {
 				        						notesToSave.push(new Note(_providers.evernote.name, note.guid, notebookData.name + ": " + note.title, noteUrlPrefix+note.guid));
 					        					numNotesSaved++;
 					        					if (numNotesSaved == notes.length) {
-					        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
+					        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
 					        					}
 				        					});
 			        					})(note);
@@ -103,7 +103,7 @@ var _providers = {
 			        					notesToSave.push(new Note(notebookTitles[note.notebookGuid] + ": " + _providers.evernote.name, note.guid, notebookName + ": " + note.title, noteUrlPrefix+note.guid));
 			        					numNotesSaved++;
 			        					if (numNotesSaved == notes.length) {
-			        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave);
+			        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
 			        					}
 			        				}
 			        			}
@@ -136,7 +136,7 @@ var _providers = {
 		},
 		consumerKey: '41045-c15029fc5174a3c9f01a4278',
 
-		getCreds: function (successCb, errorCb) {
+		getCreds: function(successCb, errorCb) {
 			ajaxPost(_providers.pocket.url.request, {
 				consumer_key: _providers.pocket.consumerKey,
 				redirect_uri: _config.redirectUri
@@ -165,7 +165,7 @@ var _providers = {
 			});
 		},
 		
-		saveNotes: function(creds) {
+		saveNotes: function(creds, successCb, errorCb) {
 			ajaxPost(_providers.pocket.url.get, {
 				access_token: creds['access_token'],
 				consumer_key: _providers.pocket.consumerKey,
@@ -180,7 +180,7 @@ var _providers = {
 					pocketNoteObj = json.list[idx];
 					notesToSave.push(new Note(_providers.pocket.name, pocketNoteObj.resolved_id, pocketNoteObj.resolved_title, pocketNoteObj.resolved_url));
 				}
-				_chromeStorageWrapper.updateNotesForProvider(_providers.pocket.name, notesToSave);
+				_chromeStorageWrapper.updateNotesForProvider(_providers.pocket.name, notesToSave, successCb, errorCb);
 			});
 		}
 	})
