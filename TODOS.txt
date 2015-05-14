@@ -1,6 +1,5 @@
 Features
 	- Create on installation notification to tell user to click on icon
-	- Notify users on auth/error with Chrome notifications
 
 UI:
 	- Update switch UI + waiting on off/on switch
@@ -8,10 +7,12 @@ UI:
 Error handling:
 	- Test malformed stuff during login
 	- Test adding notes while waiting and seeing if it is refreshed to saved notes list
-	- Success & error cb's for all storage and auth stuff
+	- Success & error cb's for all auth stuff
 
 APIs:
 	- Add another provider... Dropbox maybe?
 
 Refactor:
 	- Everything...
+	- Use StorageArea.remove when deleting stuff in storageWrapper.js
+	- Make flatter schema in storageWrapper.js
