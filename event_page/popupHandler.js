@@ -1,6 +1,6 @@
 function PopupHandler() {
 
-	this.popupNote = function(note, icon) {
+	this.popupRememberNote = function(note, icon) {
 		chrome.notifications.create(null, {
 			type: 'basic',
 			title: 'Remember?',
