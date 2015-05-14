@@ -92,7 +92,7 @@ function ChromeStorageWrapper() {
 	};
 
 	/* Returns all notes from all providers */
-	this.getNotes = function(successCb, errorCb) {
+	this.getAllNotes = function(successCb, errorCb) {
 		var allNotes = [];
 		console.log("Trying to get notes");
 		chrome.storage.local.get(providersStoreKey, function(returnObj) {
