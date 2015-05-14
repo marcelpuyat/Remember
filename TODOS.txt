@@ -1,7 +1,6 @@
 Features
 	- Create on installation notification to tell user to click on icon
 	- Notify users on auth/error with Chrome notifications
-	- Include Evernote notebook name in title
 
 UI:
 	- Update switch UI + waiting on off/on switch
@@ -12,7 +11,7 @@ Error handling:
 	- Success & error cb's for all storage and auth stuff
 
 APIs:
-	- Convert Evernote to real and not sandbox (pending Evernote approval)
+	- Add another provider... Dropbox maybe?
 
 Refactor:
 	- Everything...
