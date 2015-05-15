@@ -1,41 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-	var _providerIdToProviderMap = {};
 	chrome.runtime.sendMessage({
 		type: "getProviders"
 	}, function(response) {
 		console.log("Receiving message");
 		console.log(response);
 		if (response.error) {console.log(response.error); return;}
-		var idx;
-		var provider;
-		var authenticated;
-		var icon;
+
+		var provider, connectSwitch;
 		for (provider in response.providers) {
-			_providerIdToProviderMap[response.providers[provider].id] = {'name': provider, 'icon': response.providers[provider].icon};
-			authenticated = response.providers[provider].authenticated;
-			icon = response.providers[provider].icon;
-			$('#providers_container')
-				.append(
-					"<div class='provider-block' id='"+provider+"_block'>"+
-						"<h3 class='provider-title'>"+provider+"</h3>"+
-						"<img class='provider-icon' src='"+icon+"'>"+
-						"<input type='checkbox' name='"+response.providers[provider].id+"-connectSwitch'/>"+
-					"</div>");
-			var connectSwitch = $("[name='"+response.providers[provider].id+"-connectSwitch']");
-			connectSwitch.attr('checked', authenticated);
-			connectSwitch.attr('wasConnected', authenticated); // Needed bec toggleSwitch changes 'checked' attr
+			$('#providers_container').append(
+				"<div class='provider-block' id='"+provider+"_block'>"+
+					"<h3 class='provider-title'>"+provider+"</h3>"+
+					"<img class='provider-icon' src='"+response.providers[provider].icon+"'>"+
+					"<input type='checkbox' name='"+response.providers[provider].id+"-connectSwitch'/>"+
+				"</div>");
+
+			connectSwitch = $("[name='"+response.providers[provider].id+"-connectSwitch']");
+			connectSwitch.attr('checked', response.providers[provider].authenticated);
+			connectSwitch.attr('wasConnected', response.providers[provider].authenticated); // Needed bec toggleSwitch changes 'checked' attr
 			connectSwitch.toggleSwitch();
 		}
 		$('.ToggleSwitch').off('click'); // Turn off default toggleswitch behavior
 		$('.ToggleSwitch').on('click', onSwitchClick);
 	
+		// On hover effect so that user knows they can click on a switch to trigger it
 		$('.ToggleSwitch').hover(function() {
-			// TODO: Change this to adding class
-			$(this).find('.Nub').first().css('background', 'linear-gradient(to bottom,#fff 0%,#bbb 100%)');
+			$(this).find('.Nub').first().addClass('NubDark');
 		}, function() {
-			// TODO: Change this to adding class
-			$(this).find('.Nub').first().css('background', 'linear-gradient(to bottom,#fff 0%,#eee 100%)');
+			$(this).find('.Nub').first().removeClass('NubDark');
 		});
 	});
 

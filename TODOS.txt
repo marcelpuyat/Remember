@@ -1,9 +1,9 @@
-Features
+Features:
 	- Create on installation notification to tell user to click on icon
 	- Notifications for notes being saved
 
 UI:
-	
+	- Set waiting state on auth in UI if in the middle of auth/deauth
 
 Error handling:
 	- Test adding notes while waiting and seeing if it is refreshed to saved notes list
@@ -14,4 +14,3 @@ APIs:
 Refactor:
 	- Use StorageArea.remove when deleting stuff in storageWrapper.js
 	- Make flatter schema in storageWrapper.js
-	- Clean up onSwitchClick in index.js

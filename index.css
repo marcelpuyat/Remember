@@ -30,7 +30,7 @@ body {
 }
 
 .NubDark {
-	background: linear-gradient(to bottom,#fff 0%,#bbb 100%);
+	background: linear-gradient(to bottom,#fff 0%,#bbb 100%) !important;
 }
 
 /* End TinyTools Toggle Switch */
