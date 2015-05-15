@@ -41,6 +41,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	console.log("Sent message!");
 
+	/* Function to be called when a ToggleSwitch is clicked. ToggleSwitch is denoted by a div with the class ToggleSwitch.
+	 * Will handle sending and receiving message from event page regarding auth for a given provider, and will handle
+	 * updating UI when waiting/done/successful/on failure.
+	 */
+	function onSwitchClick() {
+		var toggleSwitchElem = this; // From event listener callback
+		var inputElem = $(this).find('input').first();
+		if (inputElem.attr('name').split('-').length != 2) {
+			console.error("Input name has been tampered with. Not going to send request.");
+		} else {
+			var providerId = inputElem.attr('name').split('-')[0].toLowerCase();
+			$(toggleSwitchElem).off('click'); // Disable default click handler of TinyTools ToggleSwitch
+			toggleProviderAuth(providerId, toggleSwitchElem, inputElem, {turnOn: inputElem.attr('wasConnected') != 'true'});
+		}
+	}
+
+	/* This would be in the body of onSwitchClick if not for the repeated code across on/off... */
+	function toggleProviderAuth(providerId, toggleSwitchElem, inputElem, options) {
+		console.log((options.turnOn ? "Authenticating" : "Deauthenticating") + " provider");
+
+		var switchTextToSwitchTo = (options.turnOn ? "OFF" : "ON");
+		var messageType = (options.turnOn ? "authenticate" : "delete");
+		var switchClass = (options.turnOn ? "Off" : "On");
+
+		$(toggleSwitchElem).css('cursor', 'progress');
+		var intervalId = animateEllipsis($(toggleSwitchElem).find('.'+switchClass+'Side').children().first());
+		chrome.runtime.sendMessage({
+			type: messageType + "Provider",
+			providerId: providerId
+		}, function(response) {
+			if (response.error != null) { 
+				console.error("UNABLE TO "+messageType+" PROVIDER WITH ID: " + providerId);
+
+				clearInterval(intervalId);
+				restoreSwitchState(toggleSwitchElem, inputElem,{turnOn:options.turnOn,switchClass:switchClass,switchText:switchTextToSwitchTo,
+					wasSuccessful: false
+				});
+			} else {
+				console.log("Trying to turn "+switchClass+" switch for: " + providerId);
+
+				clearInterval(intervalId);
+				restoreSwitchState(toggleSwitchElem, inputElem,{turnOn:options.turnOn,switchClass:switchClass,switchText:switchTextToSwitchTo,
+					wasSuccessful: true
+				});
+			}
+		});
+	}
+
+	/* . -> .. -> ... -> '' -> . over and over
+	 * Will return interval id so can be cleared to stop animation.
+	 */
 	function animateEllipsis(spanWithText) {
 		spanWithText.text('.');
 		return setInterval(function() {
@@ -54,57 +105,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		}, 400);
 	}
 
-	function onSwitchClick() {
-		var _this = this;
-		var inputElem = $(this).find('input').first();
-		if (inputElem.attr('name').split('-').length != 2) {
-			console.error("Input name has been tampered with. Not going to send request.");
-			return;
-		}
-		var providerId = inputElem.attr('name').split('-')[0].toLowerCase();
-		$(_this).off('click');
-		if (inputElem.attr('wasConnected') == 'true') {
-			console.log("Deleting provider!");
-			var intervalId = animateEllipsis($(this).find('.OnSide').children().first());
-			chrome.runtime.sendMessage({
-				type: "deleteProvider",
-				providerId: providerId
-			}, function(response) {
-				if (response.error != null) { 
-					console.error("UNABLE TO DELETE AUTH FOR PROVIDER WITH ID: " + providerId); 
-					clearInterval(intervalId);
-					$(_this).find('.OnSide').children().first().text('ON');
-					$(_this).on('click', onSwitchClick);
-					return; 
-				}
-				inputElem.attr('wasConnected', false);
-				console.log("Trying to switch off switch for: " + providerId);
-				clearInterval(intervalId);
-				$(_this).find('.OnSide').children().first().text('ON');
-				inputElem.prop('checked', false);
-				$(_this).on('click', onSwitchClick);
-			});
-		} else {
-			console.log("Authenticating provider");
-			var intervalId = animateEllipsis($(this).find('.OffSide').children().first());
-			chrome.runtime.sendMessage({
-				type: "authenticateProvider",
-				providerId: providerId
-			}, function(response) {
-				if (response.error != null) { 
-					console.error("UNABLE TO AUTHENTICATE PROVIDER WITH ID: " + providerId); 
-					clearInterval(intervalId);
-					$(_this).find('.OffSide').children().first().text('OFF');
-					$(_this).on('click', onSwitchClick);
-					return; 
-				}
-				inputElem.attr('wasConnected', true);
-				console.log("Trying to switch on switch for: " + providerId);
-				clearInterval(intervalId);
-				$(_this).find('.OffSide').children().first().text('OFF');
-				inputElem.prop('checked', true); 
-				$(_this).on('click', onSwitchClick);
-			});
+	/* This would be in the body of toggleProviderAuth if not for repeated code */
+	function restoreSwitchState(toggleSwitchElem, inputElem, options) {
+		$(toggleSwitchElem).find('.'+options.switchClass+'Side').children().first().text(options.switchText);
+		$(toggleSwitchElem).css('cursor', 'pointer');
+		$(toggleSwitchElem).on('click', onSwitchClick);
+		if (options.wasSuccessful) {
+			inputElem.prop('checked', options.turnOn);
+			inputElem.attr('wasConnected', options.turnOn); // Needed bec TinyTools ToggleSwitch breaks 'checked' attr functionality
 		}
 	}
 
