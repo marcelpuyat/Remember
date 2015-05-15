@@ -19,6 +19,8 @@ body {
 	position: relative;
 }
 
+/* For TinyTools Toggle Switch */
+
 .ToggleSwitch {
 	position: relative !important;
 	bottom: 28px;
@@ -26,3 +28,9 @@ body {
 	width: 75px !important;
 	height: 18px !important;
 }
+
+.NubDark {
+	background: linear-gradient(to bottom,#fff 0%,#bbb 100%);
+}
+
+/* End TinyTools Toggle Switch */
