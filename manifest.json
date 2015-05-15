@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Remember",
-  "description": "Don't let your memory fail you. Just put a \"remember\" tag on your notes and be reminded of them regularly.",
+  "description": "Don't let your Evernote content rot. Add a \"remember\" tag to notes you want to keep in your working memory and we'll show them to you on a regular basis.",
   "version": "1.0",
   "background": {
     "scripts": [
@@ -10,14 +10,15 @@
       "apis/evernote-sdk.js",
       "vendor/jquery-1.11.3.min.js",
       "utils/helpers.js",
-      "event_page/notifHandler.js",
-      "event_page/storageWrapper.js",
-      "event_page/Provider.js",
-      "event_page/Note.js",
-      "event_page/config.js",
-      "event_page/providers.js",
-      "event_page/alarmHandler.js",
-      "event_page/messenger.js"
+      "background/storage.js",
+      "background/Provider.js",
+      "background/Note.js",
+      "background/staticContent/config.js",
+      "background/staticContent/providers.js",
+      "background/eventHandlers/notifHandler.js",
+      "background/eventHandlers/alarmHandler.js",
+      "background/eventHandlers/messageHandler.js",
+      "background/eventHandlers/installHandler.js"
     ],
     "persistent": true
   },
