@@ -208,15 +208,26 @@ function ChromeStorageWrapper() {
 	/* Wrapper around chrome.storage.local.set to make syntax easier to use */
 	function storeKeyVal(key, val, successCb, errorCb) {
 		console.log("Storing key: " + JSON.stringify(key) + " with val: " + JSON.stringify(val));
-		var obj = {};
-		obj[key] = val;
-		chrome.storage.local.set(obj, function() {
-			if (chrome.runtime.lastError && errorCb) {
-				errorCb(chrome.runtime.lastError);
-			} else if (successCb) {
-				successCb();
-			}
-		});
+		if (val == null) {
+			console.log("Using storage remove!");
+			chrome.storage.local.remove(key, function() {
+				if (chrome.runtime.lastError && errorCb) {
+					errorCb(chrome.runtime.lastError);
+				} else if (successCb) {
+					successCb();
+				}
+			});
+		} else {
+			var obj = {};
+			obj[key] = val;
+			chrome.storage.local.set(obj, function() {
+				if (chrome.runtime.lastError && errorCb) {
+					errorCb(chrome.runtime.lastError);
+				} else if (successCb) {
+					successCb();
+				}
+			});
+		}
 	}
 }
 

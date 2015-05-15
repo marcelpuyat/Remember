@@ -1,5 +1,6 @@
 var _config = {
 	appId: chrome.runtime.id,
+	shouldRunInstallHandler: true,
 	hoursBetweenPopups: 6,
 	defaultTag: 'remember',
 	appUri: 'https://'+chrome.runtime.id+'.chromiumapp.org/',
