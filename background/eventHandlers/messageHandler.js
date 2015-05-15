@@ -4,7 +4,7 @@
 			case "getProviders":
 				console.log("Get providers request");
 				_chromeStorageWrapper.getCredsStore(function(credsStore) {
-					console.dir(credsStore);
+					console.dir("Creds store: " + credsStore);
 					var providersObj = {}; // Obj to be returned, holding all other providers
 					var provider;
 					var obj;
@@ -23,7 +23,7 @@
 						}
 					}
 					console.log("Sending response to get providers");
-					console.dir(providersObj);
+					console.dir("Response: " + providersObj);
 					sendResponse({providers: providersObj});
 				}, function(ex) {
 					var errorMsg = "Could not get providers information";

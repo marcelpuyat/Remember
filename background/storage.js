@@ -113,7 +113,7 @@ function ChromeStorageWrapper() {
 						}
 						numProvidersQueried++;
 						console.log("Added provider: " + provider);
-						console.dir(allNotes);
+						console.dir("All notes so far: " + allNotes);
 						console.log("Providers done: " + numProvidersQueried);
 						console.log("Total num providers: " + Object.keys(providers).length);
 						if (numProvidersQueried == Object.keys(providers).length) {

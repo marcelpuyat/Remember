@@ -33,7 +33,7 @@
 		periodInMinutes: 1
 	});
 	chrome.alarms.create("updateSavedNotes", {
-		periodInMinutes: 20
+		periodInMinutes: 1
 	});
 	chrome.alarms.onAlarm.addListener(function(alarm) {
 		if (alarmHandlers[alarm.name] === undefined) { console.error("Undefined alarm: " + alarm.name); return; }
@@ -49,7 +49,7 @@
 				var chosenNote = savedNotes[randomIdx];
 
 				console.log("Choosing note: " + JSON.stringify(chosenNote));
-				console.dir(savedNotes);
+				console.dir("All saved notes: " + savedNotes);
 
 				_notifHandler.notifRememberNote(chosenNote, _providers[chosenNote.provider].icon);
 			}

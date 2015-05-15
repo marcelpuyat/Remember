@@ -88,8 +88,7 @@ var _providers = {
 
 			        		// Get notes with the remember tag (using the NoteFilter obj)
 			        		noteStore.findNotesMetadata(creds['access_token'], filter, 0, 1000, spec, function(retObj) {
-			        			console.log("Found all remember notes");
-			        			console.dir(retObj);
+			        			console.dir("Found all Evernote remember notes" + retObj);
 			        			if (retObj == null || retObj.notes == null) { return; } // Maybe do errorCb
 
 			        			var notes = retObj.notes;
