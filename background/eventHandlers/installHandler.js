@@ -1,3 +1,7 @@
+/* In charge of UI flow for on install/update events.
+ * See https://developer.chrome.com/extensions/runtime#event-onInstalled for more details
+ */
+
 (function() {
 	chrome.runtime.onInstalled.addListener(function(details) {
 		/* For install reason types: 

@@ -1,3 +1,8 @@
+/* Communicates with and responds to foreground (i.e. index.html/js) using chrome's onMessage event. 
+ * See https://developer.chrome.com/extensions/runtime#event-onMessage
+ * and https://developer.chrome.com/extensions/messaging for more details.
+ */
+
 (function() {
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		switch (request.type) {

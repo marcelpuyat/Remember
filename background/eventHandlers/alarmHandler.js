@@ -1,3 +1,7 @@
+/* In charge of registering and responding to events that should happen time interval using chrome's alarm module.
+ * See https://developer.chrome.com/apps/alarms for more details.
+ */
+
 (function() {
 
 	var alarmHandlers = {

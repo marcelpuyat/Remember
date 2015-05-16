@@ -1,3 +1,7 @@
+/* In charge of using chrome's chrome.nofitications module to show notifications to user.
+ * See https://developer.chrome.com/apps/notifications for more details.
+ */
+
 function NotifHandler() {
 
 	this.notifRememberNote = function(note, icon) {
