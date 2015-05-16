@@ -16,11 +16,11 @@
 					console.log(new Date(lastPopupTime));
 					console.log("It's been " + diffInHours(new Date(lastPopupTime), new Date()) + " hours since last popup.");
 
-					// if (diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
+					if (!_config.testMode && diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
 						_chromeStorageWrapper.updateLastPopupTime(function() {
 							popupRandomNote();
 						}, console.error);
-					// }
+					}
 				}
 			}, console.error);
 		},
@@ -30,10 +30,10 @@
 	};
 
 	chrome.alarms.create("popupAlarm", {
-		periodInMinutes: 1
+		periodInMinutes: _config.testMode ? 1 : 20
 	});
 	chrome.alarms.create("updateSavedNotes", {
-		periodInMinutes: 1
+		periodInMinutes: _config.testMode ? 1 : 20
 	});
 	chrome.alarms.onAlarm.addListener(function(alarm) {
 		if (alarmHandlers[alarm.name] === undefined) { console.error("Undefined alarm: " + alarm.name); return; }

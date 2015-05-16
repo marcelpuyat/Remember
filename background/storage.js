@@ -207,7 +207,8 @@ function ChromeStorageWrapper() {
 
 	/* Wrapper around chrome.storage.local.set to make syntax easier to use */
 	function storeKeyVal(key, val, successCb, errorCb) {
-		console.log("Storing key: " + JSON.stringify(key) + " with val: " + JSON.stringify(val));
+		console.print("Storing key: ", key);
+		console.print("with val: ", val);
 		if (val == null) {
 			console.log("Using storage remove!");
 			chrome.storage.local.remove(key, function() {

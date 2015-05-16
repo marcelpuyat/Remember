@@ -5,7 +5,7 @@
 		 */
 		switch (details.reason) {
 			case "install":
-				if (_config.shouldRunInstallHandler) {
+				if (!_config.testMode) {
 					console.log("INSTALLED!");
 				}
 				break;
