@@ -9,6 +9,7 @@
       "vendor/jsOAuth-1.3.7.min.js",
       "apis/evernote-sdk.js",
       "vendor/jquery-1.11.3.min.js",
+      "utils/extensions.js",
       "utils/helpers.js",
       "background/storage.js",
       "background/Provider.js",
