@@ -24,10 +24,11 @@ var _providers = {
 				'method': 'GET', 
 				'url': hostName + '/oauth', 
 				'success': function(res) {
-					console.log(_config.redirectUri);
+					console.log("Evernote getting creds");
+					console.print(_config.redirectUri);
 					var resArray = res.text.split('&');
 					if (resArray.length < 2) { errorCb("Evernote response for oauth invalid: " + resArray); return; }
-					console.log(res.text);
+					console.print(res.text);
 					var oauthToken = resArray[0].split('=')[1];
 					var oauthTokenSecret = resArray[1].split('=')[1];
 
@@ -39,7 +40,7 @@ var _providers = {
 					}, function(getVerifierUrl) {
 
 						// Get verifier from url on callback from Evernote
-						var oauthVerifier = $.urlParam("oauth_verifier", getVerifierUrl);
+						var oauthVerifier = $.getUrlParam("oauth_verifier", getVerifierUrl);
 						if (oauthVerifier == null) { errorCb("Could not get verifier from Evernote"); return; }
 						oauth.setVerifier(oauthVerifier);
 						oauth.setAccessToken([oauthToken,oauthTokenSecret]);
@@ -88,7 +89,7 @@ var _providers = {
 
 			        		// Get notes with the remember tag (using the NoteFilter obj)
 			        		noteStore.findNotesMetadata(creds['access_token'], filter, 0, 1000, spec, function(retObj) {
-			        			console.dir("Found all Evernote remember notes" + retObj);
+			        			console.print("Found all Evernote remember notes: ", retObj);
 			        			if (retObj == null || retObj.notes == null) { return; } // Maybe do errorCb
 
 			        			var notes = retObj.notes;

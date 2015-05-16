@@ -63,7 +63,7 @@ function ChromeStorageWrapper() {
 					// Create new providers store
 					var newProvidersStore = {};
 					newProvidersStore[provider] = true;
-					console.log("Creating new provider store: " + JSON.stringify(newProvidersStore));
+					console.print("Creating new provider store: ", newProvidersStore);
 					storeKeyVal(providersStoreKey, newProvidersStore, successCb, errorCb);
 				} else {
 					// Update providers store to say this provider does exist
@@ -113,7 +113,7 @@ function ChromeStorageWrapper() {
 						}
 						numProvidersQueried++;
 						console.log("Added provider: " + provider);
-						console.dir("All notes so far: " + allNotes);
+						console.print("All notes so far: ", allNotes);
 						console.log("Providers done: " + numProvidersQueried);
 						console.log("Total num providers: " + Object.keys(providers).length);
 						if (numProvidersQueried == Object.keys(providers).length) {

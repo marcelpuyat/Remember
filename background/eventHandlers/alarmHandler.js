@@ -48,8 +48,8 @@
 				var randomIdx = Math.floor(Math.random()*savedNotes.length);
 				var chosenNote = savedNotes[randomIdx];
 
-				console.log("Choosing note: " + JSON.stringify(chosenNote));
-				console.dir("All saved notes: " + savedNotes);
+				console.print("Choosing note: ", chosenNote);
+				console.print("All saved notes: ", savedNotes);
 
 				_notifHandler.notifRememberNote(chosenNote, _providers[chosenNote.provider].icon);
 			}
