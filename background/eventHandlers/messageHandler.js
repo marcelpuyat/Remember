@@ -8,7 +8,7 @@
 		switch (request.type) {
 			case "getProviders":
 				console.log("Get providers request");
-				_chromeStorageWrapper.getCredsStore(function(credsStore) {
+				_storage.getCredsStore(function(credsStore) {
 					console.print("Creds store: ", credsStore);
 					var providersObj = {}; // Obj to be returned, holding all other providers
 					var provider;

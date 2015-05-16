@@ -112,7 +112,7 @@ var _providers = {
 				        						// We must only update our saved notes after all notes have been saved. Each is async, so all have to check if we are done
 					        					numNotesSaved++;
 					        					if (numNotesSaved == notes.length) {
-					        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
+					        						_storage.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
 					        					}
 				        					});
 			        					})(note);
@@ -123,7 +123,7 @@ var _providers = {
 			        					// We must only update our saved notes after all notes have been saved. Each is async, so all have to check if we are done
 			        					numNotesSaved++;
 			        					if (numNotesSaved == notes.length) {
-			        						_chromeStorageWrapper.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
+			        						_storage.updateNotesForProvider(_providers.evernote.name, notesToSave, successCb, errorCb);
 			        					}
 			        				}
 			        			}
@@ -209,7 +209,7 @@ var _providers = {
 					notesToSave.push(new Note(_providers.pocket.name, pocketNoteObj.resolved_id, pocketNoteObj.resolved_title, pocketNoteObj.resolved_url));
 				}
 				
-				_chromeStorageWrapper.updateNotesForProvider(_providers.pocket.name, notesToSave, successCb, errorCb);
+				_storage.updateNotesForProvider(_providers.pocket.name, notesToSave, successCb, errorCb);
 			}, errorCb);
 		}
 	})

@@ -9,10 +9,12 @@ function ChromeStorageWrapper() {
 	 *   }
 	 *
 	 *   // Global mapping from provider name to notes saved
+	 *   // Schema is made this way to make it easy to get/change notes for a given provider.
 	 *   'pocket': [{note obj1}, {note obj2}, ...]
 	 *   'evernote': [...]
 	 *
 	 *   // Simply stores whether a provider exists
+	 *   // Needing this is is a consequence of storing notes under a provider in "global" keyspace
 	 *   providersStoreKey: {
 	 *       'pocket': true,
 	 *       'evernote': true,
@@ -232,4 +234,4 @@ function ChromeStorageWrapper() {
 	}
 }
 
-var _chromeStorageWrapper = new ChromeStorageWrapper();
+var _storage = new ChromeStorageWrapper();

@@ -7,13 +7,13 @@ function Provider(fields) {
 	
 	this.saveNotesAndCreds = function(creds, successCb, errorCb) {
 		_this.saveNotes(creds, function() {
-			_chromeStorageWrapper.saveCredsForProvider(_this.name, creds, successCb, errorCb);
+			_storage.saveCredsForProvider(_this.name, creds, successCb, errorCb);
 		}, errorCb);
 	};
 
 	this.deleteNotesAndCreds = function(successCb, errorCb) {
-		_chromeStorageWrapper.deleteCredsForProvider(_this.name, function() {
-			_chromeStorageWrapper.deleteNotesForProvider(_this.name, successCb, errorCb);
+		_storage.deleteCredsForProvider(_this.name, function() {
+			_storage.deleteNotesForProvider(_this.name, successCb, errorCb);
 		}, errorCb);
 	}
 

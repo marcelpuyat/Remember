@@ -7,11 +7,11 @@
 	var alarmHandlers = {
 		popupAlarm: function(alarm) {
 			console.log("Popup alarm");
-			_chromeStorageWrapper.getLastPopupTime(function(lastPopupTime) {
+			_storage.getLastPopupTime(function(lastPopupTime) {
 				if (lastPopupTime == null) {
 					// Means we are doing this for first time.
 					console.log("Haven't popped up before.");
-					_chromeStorageWrapper.updateLastPopupTime(function() {
+					_storage.updateLastPopupTime(function() {
 						popupRandomNote();
 					}, console.error);
 				} else {
@@ -21,7 +21,7 @@
 					console.log("It's been " + diffInHours(new Date(lastPopupTime), new Date()) + " hours since last popup.");
 
 					if (!_config.testMode && diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
-						_chromeStorageWrapper.updateLastPopupTime(function() {
+						_storage.updateLastPopupTime(function() {
 							popupRandomNote();
 						}, console.error);
 					}
@@ -29,7 +29,7 @@
 			}, console.error);
 		},
 		updateSavedNotes: function(alarm) {
-			_chromeStorageWrapper.refreshAllProviderNotes(null, console.error);
+			_storage.refreshAllProviderNotes(null, console.error);
 		}
 	};
 
@@ -45,7 +45,7 @@
 	});
 
 	function popupRandomNote() {
-		_chromeStorageWrapper.getAllNotes(function(savedNotes) {
+		_storage.getAllNotes(function(savedNotes) {
 			if (savedNotes.length > 0) {
 				console.log("Pop up!");
 
