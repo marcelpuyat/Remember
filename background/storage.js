@@ -130,6 +130,7 @@ function ChromeStorageWrapper() {
 	};
 
 	this.refreshAllProviderNotes = function(successCb, errorCb) {
+		// TODO: Return array fof expired providers
 		console.log("Refreshing all provider notes");
 		var provider;
 		for (var providerName in _providers) {

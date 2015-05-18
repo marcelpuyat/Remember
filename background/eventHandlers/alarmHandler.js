@@ -20,7 +20,7 @@
 					console.log(new Date(lastPopupTime));
 					console.log("It's been " + diffInHours(new Date(lastPopupTime), new Date()) + " hours since last popup.");
 
-					if (!_config.testMode && diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
+					if (_config.testMode || diffInHours(lastPopupTime, new Date()) > _config.hoursBetweenPopups) {
 						_storage.updateLastPopupTime(function() {
 							popupRandomNote();
 						}, console.error);
@@ -29,7 +29,8 @@
 			}, console.error);
 		},
 		updateSavedNotes: function(alarm) {
-			_storage.refreshAllProviderNotes(null, console.error);
+			_storage.refreshAllProviderNotes(null, console.error); 
+			// TODO: On error, if error type is expired, tell user that provider token has expired and turn it off
 		}
 	};
 

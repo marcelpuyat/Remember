@@ -1,4 +1,4 @@
-// Struct to hold all fields needed for a popup notif
+// Struct to hold all fields needed for a remember notif
 function Note(provider, id, title, url) {
 	this.provider = provider;
 	// Universal id is provider_id. (i.e. pocket_121, evernote_1251, etc.)

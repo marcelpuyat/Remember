@@ -4,7 +4,7 @@ var _providers = {
 		id: _config.providerToIdMap.evernote,
 		name: 'evernote',
 		readableName: 'Evernote',
-		icon: 'images/evernote_icon.png',
+		icon: 'assets/images/evernote_icon.png',
 		url: {
 			redirect_authorize: 'https://www.evernote.com/OAuth.action'
 		},
@@ -63,6 +63,7 @@ var _providers = {
 			});
 		},
 		saveNotes: function(creds, successCb, errorCb) {
+			// TODO: Communicate somehow if token has expired
 			console.log("Saving notes for Evernote");
 			var noteStoreTransport = new Thrift.BinaryHttpTransport(creds['note_store_url']);
 			var noteStoreProtocol = new Thrift.BinaryProtocol(noteStoreTransport);
@@ -145,7 +146,7 @@ var _providers = {
 		id: _config.providerToIdMap.pocket,
 		name: 'pocket',
 		readableName: 'Pocket',
-		icon: 'images/pocket_icon.png',
+		icon: 'assets/images/pocket_icon.png',
 		url: {
 			request : 'https://getpocket.com/v3/oauth/request',
 			redirect_authorize: 'https://getpocket.com/auth/authorize',
@@ -191,6 +192,8 @@ var _providers = {
 		},
 		
 		saveNotes: function(creds, successCb, errorCb) {
+
+			// TODO: Communicate somehow if token has expired
 
 			// First, get notes using ajax
 			ajaxPost(_providers.pocket.url.get, {

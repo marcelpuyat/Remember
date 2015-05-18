@@ -2,13 +2,16 @@ Features:
 	- Create on installation notification to tell user to click on icon
 	- Notifications for notes being saved, showing list of notes that were saved
 	- Getting user schedule and using it to know when/when not to popup
-	- 
 
 UI:
-	- Set waiting state on auth in UI if in the middle of auth/deauth
 
 Error handling:
 	- Expiration of tokens
+	- Test Pocket archived stuff
 
 Refactor:
-	- Make flatter schema in storageWrapper.js
+
+Publishing:
+	- http://ecquire.com/blog/how-to-get-more-chrome-extension-downloads/
+	- Work on banner/screenshots/assets
+		- http://bannerad.designcrowd.com/
